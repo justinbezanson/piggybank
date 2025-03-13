@@ -1,10 +1,11 @@
 <script setup>
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import TextInput from '@/Components/TextInput.vue';
-    import { Link, useForm, usePage } from '@inertiajs/vue3';
+    import { Link, useForm, router } from '@inertiajs/vue3';
     import InputLabel from '@/Components/InputLabel.vue';
     import InputError from '@/Components/InputError.vue';
-import Dropdown from '@/Components/Dropdown.vue';
+    import Dropdown from '@/Components/Dropdown.vue';
+    import PrimaryButton from '@/Components/PrimaryButton.vue';
 
     const props = defineProps(['user']);
 
@@ -19,6 +20,10 @@ import Dropdown from '@/Components/Dropdown.vue';
         { value: 'weekly', label: 'Weekly' },
         { value: 'monthly', label: 'Monthly' },
     ];
+
+    function submit() {
+        form.post(route('kids.store'));
+    }
 </script>
 
 <template>
@@ -48,7 +53,7 @@ import Dropdown from '@/Components/Dropdown.vue';
                         </header>
 
                         <form
-                            @submit.prevent="form.patch(route('profile.update'))"
+                            @submit.prevent="submit"
                             class="mt-6 space-y-6 lg:w-1/2"
                         >
                             <div>
@@ -58,8 +63,7 @@ import Dropdown from '@/Components/Dropdown.vue';
                                     id="name"
                                     type="text"
                                     class="mt-1 block w-full"
-                                    v-model="form.name"
-                                    required
+                                    v-model="form.name"                                    
                                     autofocus
                                     autocomplete="name"
                                 />
@@ -75,7 +79,6 @@ import Dropdown from '@/Components/Dropdown.vue';
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.amount"
-                                    required
                                     autocomplete="amount"
                                 />
 
@@ -90,7 +93,6 @@ import Dropdown from '@/Components/Dropdown.vue';
                                     class="mt-1 block w-full"
                                     width="full"
                                     v-model="form.interval"
-                                    required
                                     autocomplete="interval"
                                 >
                                     <template #trigger>
@@ -121,6 +123,10 @@ import Dropdown from '@/Components/Dropdown.vue';
                                 </Dropdown>
 
                                 <InputError class="mt-2" :message="form.errors.interval" />
+                            </div>
+
+                            <div>
+                                <PrimaryButton>Create</PrimaryButton>
                             </div>
                         </form>
                     </section>
