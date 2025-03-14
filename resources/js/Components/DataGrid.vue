@@ -25,8 +25,11 @@
 
     <table class="w-full">
         <thead>
-            <tr class="border-b  border-gray-600">
-                <th v-for="column in props.columns">{{ column.header }}</th>
+            <tr class="border-b border-gray-600">
+                <template v-for="column in props.columns">
+                    <th v-if="column.hasOwnProperty('class')" :class="column.class">{{ column.header }}</th>
+                    <th v-else>{{ column.header }}</th>
+                </template>
             </tr>
         </thead>
         <tbody>
@@ -64,8 +67,11 @@
             </tr>
         </tbody>
         <tfoot>
-            <tr class="border-t  border-gray-600" v-if="props.data.data.length > 0">
-                <th v-for="column in props.columns">{{ column.header }}</th>
+            <tr class="border-t  border-gray-600" v-if="props.data.data.length > 0 && props.showColumnsInFooter !== 'false'">
+                <template v-for="column in props.columns">
+                    <th v-if="column.hasOwnProperty('class')" :class="column.class">{{ column.header }}</th>
+                    <th v-else>{{ column.header }}</th>
+                </template>
             </tr>
         </tfoot>
     </table>
@@ -91,7 +97,7 @@ import FormSection from '@/Components/FormSection.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 
-const props = defineProps(['data', 'columns', 'keyColumn', 'searchRoute', 'currentSearch']);
+const props = defineProps(['data', 'columns', 'keyColumn', 'searchRoute', 'currentSearch', 'showColumnsInFooter']);
 
 const search = ref(props.currentSearch);
 

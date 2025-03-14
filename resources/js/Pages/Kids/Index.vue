@@ -27,6 +27,7 @@
                             keyColumn="id"
                             searchRoute="kids.index"
                             currentSearch=""
+                            showColumnsInFooter="false"
                         />
                     </div>
                 </div>
@@ -47,17 +48,21 @@ const columns = [
     {
         header: 'Name',
         column: 'name',
+        class: 'text-left',
     },
     {
         header: 'Amount',
         column: 'amount',
+        class: 'text-left',
     },
     {
         header: 'Interval',
         column: 'interval',
+        class: 'text-left',
     },
     {
-        header: 'Actions',
+        header: '',
+        class: 'text-left',
         buttons: [
             {
                 text: 'Edit',
