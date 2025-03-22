@@ -7,12 +7,12 @@
     import Dropdown from '@/Components/Dropdown.vue';
     import PrimaryButton from '@/Components/PrimaryButton.vue';
 
-    const props = defineProps(['kid']);
+    const props = defineProps(['user', 'kid']);
 
     const form = useForm({
-        name: '',
-        amount: 0.00,
-        interval: '',
+        name: props.kid.name || '',
+        amount: props.kid.amount.toFixed(2) || '0.00',
+        interval: props.kid.interval || '',
     });
 
     const intervals = [
@@ -22,10 +22,8 @@
     ];
 
     function submit() {
-        form.post(route('kids.store'));
+        form.put(route('kids.update', props.kid.id));
     }
-
-    console.log(props.kid);
 </script>
 
 <template>
@@ -63,6 +61,7 @@
 
                                 <TextInput
                                     id="name"
+                                    name="name"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.name"                                    
@@ -78,6 +77,7 @@
 
                                 <TextInput
                                     id="amount"
+                                    name="amount"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.amount"
@@ -92,6 +92,7 @@
 
                                 <Dropdown
                                     id="interval"
+                                    name="interval"
                                     class="mt-1 block w-full"
                                     width="full"
                                     v-model="form.interval"

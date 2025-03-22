@@ -6,9 +6,11 @@ use App\Models\Kid;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Actions\CreateKid;
+use App\Actions\UpdateKid;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\CreateKidRequest;
+use App\Http\Requests\UpdateKidRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class KidController extends Controller
@@ -67,6 +69,22 @@ class KidController extends Controller
 
         return Inertia::render('Kids/Show', [
             'kid' => $kid,
+            'user' => $request->user(),
         ]);
+    }
+
+    public function update(UpdateKidRequest $request, int $kidId) : RedirectResponse
+    {
+        try {
+            $kid = Kid::viewable($request->user())
+                ->findOrFail($kidId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $action = new UpdateKid();
+        $action->handle($request->validated(), $kid);
+        
+        return to_route('kids.index');
     }
 }

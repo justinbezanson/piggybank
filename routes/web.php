@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/kids/create', [KidController::class, 'create'])->name('kids.create');
     Route::post('/kids', [KidController::class, 'store'])->name('kids.store');
     Route::get('/kids/{kid}', [KidController::class, 'show'])->name('kids.show');
+    Route::put('/kids/{kid}', [KidController::class, 'update'])->name('kids.update');
 });
 
 require __DIR__.'/auth.php';
