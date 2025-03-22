@@ -26,7 +26,7 @@
                             :columns="columns"
                             keyColumn="id"
                             searchRoute="kids.index"
-                            currentSearch=""
+                            :currentSearch="search"
                             showColumnsInFooter="false"
                         />
                     </div>
@@ -42,7 +42,7 @@ import { Head } from '@inertiajs/vue3';
 import DataGrid from '@/Components/DataGrid.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 
-const props = defineProps(['kids']);
+const props = defineProps(['kids', 'search']);
 
 const columns = [
     {
@@ -66,11 +66,7 @@ const columns = [
         buttons: [
             {
                 text: 'Edit',
-                route: ['kids.edit', 'id'],
-                handler: (event, row) => {
-                    event.preventDefault();
-                    console.log(row);
-                }
+                route: ['/kids/%1', ['id']]
             },
             {
                 text: 'Delete',

@@ -9,6 +9,7 @@ use App\Actions\CreateKid;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\CreateKidRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class KidController extends Controller
 {
@@ -20,11 +21,21 @@ class KidController extends Controller
     public function index(Request $request) : Response
     {
         $user = $request->user();
+
+        if(empty($request->query('search'))) {
+            $kids = Kid::viewable($user)
+                ->orderBy('name', 'ASC')
+                ->paginate(10);
+        } else {
+            $kids = Kid::viewable($user)
+                ->where('name', 'LIKE', '%' . $request->query('search') . '%')
+                ->orderBy('name', 'ASC')
+                ->paginate(10);
+        }
         
         return Inertia::render('Kids/Index', [
-            'kids' => Kid::viewable($user)
-                ->orderBy('name', 'ASC')
-                ->paginate(10),
+            'kids' => $kids,
+            'search' => $request->query('search'),
         ]);
     }
 
@@ -43,5 +54,19 @@ class KidController extends Controller
         $action->handle($request);
         
         return to_route('kids.index');
+    }
+
+    public function show(Request $request, int $kidId) : Response
+    {
+        try {
+            $kid =Kid::viewable($request->user())
+                ->findOrFail($kidId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        return Inertia::render('Kids/Show', [
+            'kid' => $kid,
+        ]);
     }
 }
