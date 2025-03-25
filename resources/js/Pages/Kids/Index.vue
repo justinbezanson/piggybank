@@ -16,11 +16,16 @@
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6 text-gray-900">
+                        <div v-if="props.successMessage" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                            {{ props.successMessage }}
+                        </div>
+
                         <p>
                             <LinkButton href="/kids/create">
                                 Add Kid
                             </LinkButton>
                         </p>
+
                         <DataGrid 
                             :data="props.kids" 
                             :columns="columns"
@@ -38,11 +43,15 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import DataGrid from '@/Components/DataGrid.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 
-const props = defineProps(['kids', 'search']);
+const props = defineProps(['kids', 'search', 'successMessage']);
+
+const deleteForm = useForm({
+
+});
 
 const columns = [
     {
@@ -73,7 +82,9 @@ const columns = [
                 method: 'POST',
                 handler: (event, row) => {
                     event.preventDefault();
-                    console.log(row);
+                    if(confirm('Are you sure you want to delete this kid?')) {
+                        deleteForm.delete(`/kids/${row.id}`);
+                    }
                 }
             }
         ]

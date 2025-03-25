@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Actions\CreateKid;
 use App\Actions\UpdateKid;
+use App\Actions\DeleteKid;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\CreateKidRequest;
@@ -38,6 +39,7 @@ class KidController extends Controller
         return Inertia::render('Kids/Index', [
             'kids' => $kids,
             'search' => $request->query('search'),
+            'successMessage' => $request->query('successMessage'),
         ]);
     }
 
@@ -55,13 +57,15 @@ class KidController extends Controller
         $action = new CreateKid();
         $action->handle($request);
         
-        return to_route('kids.index');
+        return to_route('kids.index', [
+            'successMessage' => 'Kid created successfully.',
+        ]);
     }
 
     public function show(Request $request, int $kidId) : Response
     {
         try {
-            $kid =Kid::viewable($request->user())
+            $kid = Kid::viewable($request->user())
                 ->findOrFail($kidId);
         } catch (ModelNotFoundException $e) {
             abort(404);
@@ -85,6 +89,25 @@ class KidController extends Controller
         $action = new UpdateKid();
         $action->handle($request->validated(), $kid);
         
-        return to_route('kids.index');
+        return to_route('kids.index', [
+            'successMessage' => 'Kid updated successfully.',
+        ]);
+    }
+
+    public function destroy(Request $request, int $kidId) : RedirectResponse
+    {
+        try {
+            $kid = Kid::viewable($request->user())
+                ->findOrFail($kidId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $action = new DeleteKid();
+        $action->handle($kid);
+
+        return to_route('kids.index', [
+            'successMessage' => 'Kid deleted successfully.',
+        ]);
     }
 }

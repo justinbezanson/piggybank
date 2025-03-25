@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/kids', [KidController::class, 'store'])->name('kids.store');
     Route::get('/kids/{kid}', [KidController::class, 'show'])->name('kids.show');
     Route::put('/kids/{kid}', [KidController::class, 'update'])->name('kids.update');
+    Route::delete('/kids/{kid}', [KidController::class, 'destroy'])->name('kids.destroy');
 });
 
 require __DIR__.'/auth.php';
