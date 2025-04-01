@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\KidController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -30,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/kids/{kid}', [KidController::class, 'show'])->name('kids.show');
     Route::put('/kids/{kid}', [KidController::class, 'update'])->name('kids.update');
     Route::delete('/kids/{kid}', [KidController::class, 'destroy'])->name('kids.destroy');
+
+    Route::resource('transactions', TransactionController::class);
 });
 
 require __DIR__.'/auth.php';
