@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kid;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TransactionController extends Controller
 {
@@ -18,9 +20,16 @@ class TransactionController extends Controller
     {
         $user = $request->user();
         $kid = null;
-        $transactions = [];
+        $transactions = Transaction::query();
 
         if(!empty($request->query('kid'))) {
+            try {
+                $kid = Kid::viewable($request->user())
+                    ->findOrFail($request->query('kid'));
+            } catch (ModelNotFoundException $e) {
+                abort(404);
+            }
+
             if(empty($request->query('search'))) {
                 $transactions = Transaction::viewable($user, $kid)
                     ->orderBy('name', 'ASC')
@@ -37,7 +46,8 @@ class TransactionController extends Controller
             'transactions' => $transactions,
             'user' => $user,
             'kid' => $kid,
-            'search' => $request->query('search'),
+            'kids' => Kid::viewable($user)->get(),
+            'search' => $request->query('search') ?? '',
             'successMessage' => $request->query('successMessage'),
         ]);
     }
