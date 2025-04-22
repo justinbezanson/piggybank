@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kid;
+use App\Actions\CreateTransaction;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Transaction;
@@ -53,11 +54,15 @@ class TransactionController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource.\
+     * @param Request $request
+     * @return Response
      */
-    public function create()
+    public function create(Request $request) : Response
     {
-        //
+        return Inertia::render('Transactions/Create', [
+            'kids' => Kid::viewable($request->user())->get(),
+        ]);
     }
 
     /**
@@ -65,7 +70,12 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        //
+        $action = new CreateTransaction();
+        $action->handle($request);
+        
+        return to_route('transactions.index', [
+            'successMessage' => 'Transaction created successfully.',
+        ]);
     }
 
     /**

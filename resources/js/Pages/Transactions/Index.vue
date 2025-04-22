@@ -64,7 +64,7 @@
                         <br style="clear: both;" />
 
                         <DataGrid 
-                            :data="{data:[]}" 
+                            :data="transactionData" 
                             :columns="columns"
                             keyColumn="id"
                             searchRoute="transactions.index"
@@ -89,12 +89,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 const props = defineProps(['transactions', 'user', 'kid', 'kids', 'search', 'successMessage']);
 
 const kids = props.kids?.map(kid => ({ value: kid.id, label: kid.name }));
-
-// [
-//         { value: '', label: 'None' },
-//         { value: 'weekly', label: 'Weekly' },
-//         { value: 'monthly', label: 'Monthly' },
-//     ];
+const transactionData = props.transactions.hasOwnProperty('data') ? props.transactions : {data:[]};
 
 const deleteForm = useForm({
 
