@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use App\Models\Kid;
-use App\Actions\CreateTransaction;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Actions\CreateTransaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -40,6 +41,15 @@ class TransactionController extends Controller
                     ->where('note', 'LIKE', '%' . $request->query('search') . '%')
                     ->orderBy('note', 'ASC')
                     ->paginate(10);
+            }
+        }
+
+        foreach ($transactions as $transaction) {
+            if(!empty($transaction)) {
+                $date = new DateTime($transaction->date);
+                $transaction->dateFormatted = $date->format('m/d/Y');
+                $transaction->typeFormatted = $transaction->type === 'DEPOSIT' ? 'Deposit' : 'Withdrawal';
+                $transaction->amountFormatted = number_format($transaction->amount, 2);
             }
         }
         

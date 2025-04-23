@@ -14,6 +14,7 @@
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                    style="min-height: 400px;"
                 >
                     <div class="p-6 text-gray-900">
                         <div v-if="props.successMessage" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
@@ -39,7 +40,7 @@
                                                 class="inline-flex justify-between w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                                 id="options-menu" aria-haspopup="true" aria-expanded="true">
                                             <span v-if="filterForm.kid === ''">Select Kid To Filter</span>
-                                            <span v-else>{{ filterForm.kid }}</span>
+                                            <span v-else>{{ getKidNameById(filterForm.kid) }}</span>
                                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                 fill="currentColor" aria-hidden="true">
                                                 <path fill-rule="evenodd"
@@ -70,6 +71,7 @@
                             searchRoute="transactions.index"
                             :currentSearch="search"
                             showColumnsInFooter="false"
+                            showSearch="false"
                         />
                     </div>
                 </div>
@@ -83,37 +85,56 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import DataGrid from '@/Components/DataGrid.vue';
 import LinkButton from '@/Components/LinkButton.vue';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import Dropdown from '@/Components/Dropdown.vue';
 
 const props = defineProps(['transactions', 'user', 'kid', 'kids', 'search', 'successMessage']);
 
 const kids = props.kids?.map(kid => ({ value: kid.id, label: kid.name }));
-const transactionData = props.transactions.hasOwnProperty('data') ? props.transactions : {data:[]};
+let transactionData = !props.transactions.hasOwnProperty('data') ? {data:[]} : props.transactions;
+// const formattedData = transactionData.data.map(transaction => {
+//     transaction.dateFormatted = new Date(transaction.date).toLocaleDateString('en-US');
+//     transaction.type = transaction.type === 'DEPOSIT' ? 'Deposit' : 'Withdrawal';
+//     transaction.amountFormatted = transaction.amount.toFixed(2);
+
+//     return transaction;
+// });
+// transactionData.data = formattedData;
 
 const deleteForm = useForm({
 
 });
 
 const filterForm = useForm({
-    'kid': ''
+    'kid': props.kid?.id || ''
+});
+
+watch(() => filterForm.kid, (newKid, oldKid) => {
+    if(newKid !== oldKid && newKid !== '') {
+        filterForm.get(route('transactions.index', {kid: newKid}));
+    }
 });
 
 
 const columns = [
     {
-        header: 'Name',
-        column: 'name',
+        header: 'Date',
+        column: 'dateFormatted',
         class: 'text-left',
     },
     {
         header: 'Amount',
-        column: 'amount',
+        column: 'amountFormatted',
         class: 'text-left',
     },
     {
-        header: 'Interval',
-        column: 'interval',
+        header: 'Type',
+        column: 'typeFormatted',
+        class: 'text-left',
+    },
+    {
+        header: 'Note',
+        column: 'note',
         class: 'text-left',
     },
     {
@@ -129,12 +150,16 @@ const columns = [
                 method: 'POST',
                 handler: (event, row) => {
                     event.preventDefault();
-                    if(confirm('Are you sure you want to delete this kid?')) {
-                        //deleteForm.delete(`/kids/${row.id}`);
+                    if(confirm('Are you sure you want to delete this transaction?')) {
+                        //deleteForm.delete(`/transactions/${row.id}`);
                     }
                 }
             }
         ]
     }
 ];
+
+function getKidNameById(kidId) {
+    return props.kids.find(kid => kid.id === kidId)?.name;
+}
 </script>

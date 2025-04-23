@@ -1,5 +1,5 @@
 <template>
-    <div class="datagrid grid lg:grid-cols-2 sm:grid-cols-1 gap-4">
+    <div class="datagrid grid lg:grid-cols-2 sm:grid-cols-1 gap-4" v-if="props.showSearch !== 'false'">
         <div>
             <!--TODO: results per page-->
         </div>
@@ -97,7 +97,7 @@ import FormSection from '@/Components/FormSection.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 
-const props = defineProps(['data', 'columns', 'keyColumn', 'searchRoute', 'currentSearch', 'showColumnsInFooter']);
+const props = defineProps(['data', 'columns', 'keyColumn', 'searchRoute', 'currentSearch', 'showColumnsInFooter', 'showSearch']);
 
 const search = ref(props.currentSearch);
 
@@ -153,6 +153,6 @@ const datagridSearch = async () => {
 };
 
 onMounted(() => {
-    document.getElementById('search').focus();
+    document.getElementById('search')?.focus();
 });
 </script>
