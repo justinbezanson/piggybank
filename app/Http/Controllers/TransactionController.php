@@ -93,7 +93,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        return Inertia::render('Transactions/Show', []);
     }
 
     /**
