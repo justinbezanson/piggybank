@@ -13,7 +13,7 @@
         kid: '',
         type: '',
         amount: 0.00,
-        date: '',
+        date: todaysDate(),
         note: '',
     });
 
@@ -31,6 +31,10 @@
     function getKidNameById(kidId) {
         return props.kids.find(kid => kid.id === kidId)?.name;
     }
+
+    function todaysDate() {
+        return new Date().toISOString().split('T')[0];
+    }
 </script>
 
 <template>
@@ -42,7 +46,7 @@
                 Create Transaction
             </h2>
         </template>
-        
+
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div
